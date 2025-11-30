@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}Détails du Membre - Admin{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>
+                <i class="fas fa-user-circle text-primary"></i>
+                {{ membre.nom }} {{ membre.prenom }}
+            </h1>
+            <p class="text-secondary">Membre #{{ membre.membre_id }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('admin.modifier_membre', membre_id=membre.membre_id) }}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Modifier
+            </a>
+            <a href="{{ url_for('admin.membres') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Personal Information -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="mb-4">
+                        <i class="fas fa-id-card text-primary"></i> Informations Personnelles
+                    </h5>
+
+                    <div class="mb-3">
+                        <label class="text-secondary">Email</label>
+                        <p><i class="fas fa-envelope"></i> {{ membre.email }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-secondary">Téléphone</label>
+                        <p><i class="fas fa-phone"></i> {{ membre.telephone }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-secondary">Date de naissance</label>
+                        <p><i class="fas fa-calendar"></i> {{ membre.date_naissance.strftime('%d/%m/%Y') if
+                            membre.date_naissance else 'N/A' }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-secondary">Adresse</label>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ membre.adresse or 'Non renseignée' }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-secondary">Date d'inscription</label>
+                        <p><i class="fas fa-calendar-plus"></i> {{ membre.date_inscription.strftime('%d/%m/%Y') if
+                            membre.date_inscription else 'N/A' }}</p>
+                    </div>
+
+                    <div>
+                        <label class="text-secondary">Statut</label>
+                        <p>
+                            {% if membre.statut == 'ACTIF' %}
+                            <span class="badge badge-success"><i class="fas fa-check"></i> Actif</span>
+                            {% elif membre.statut == 'INACTIF' %}
+                            <span class="badge badge-danger"><i class="fas fa-times"></i> Inactif</span>
+                            {% elif membre.statut == 'SUSPENDU' %}
+                            <span class="badge badge-warning"><i class="fas fa-pause"></i> Suspendu</span>
+                            {% else %}
+                            <span class="badge badge-info">{{ membre.statut }}</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subscriptions -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="mb-4">
+                        <i class="fas fa-tag text-success"></i> Abonnements
+                    </h5>
+
+                    {% if souscriptions %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Début</th>
+                                    <th>Fin</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sous in souscriptions %}
+                                <tr>
+                                    <td>{{ sous.abonnement.nom if sous.abonnement else 'N/A' }}</td>
+                                    <td>{{ sous.date_debut.strftime('%d/%m/%Y') if sous.date_debut else 'N/A' }}</td>
+                                    <td>{{ sous.date_fin.strftime('%d/%m/%Y') if sous.date_fin else 'N/A' }}</td>
+                                    <td>
+                                        {% if sous.statut == 'ACTIF' %}
+                                        <span class="badge badge-success">Actif</span>
+                                        {% else %}
+                                        <span class="badge badge-secondary">{{ sous.statut }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-secondary text-center py-3">
+                        <i class="fas fa-inbox"></i> Aucun abonnement
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Sessions -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="mb-4">
+                        <i class="fas fa-dumbbell text-warning"></i> Dernières Sessions
+                    </h5>
+
+                    {% if sessions %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Heure</th>
+                                    <th>Coach</th>
+                                    <th>Type</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for session in sessions %}
+                                <tr>
+                                    <td>{{ session.date_heure_debut.strftime('%d/%m/%Y') if session.date_heure_debut
+                                        else 'N/A' }}</td>
+                                    <td>{{ session.date_heure_debut.strftime('%H:%M') if session.date_heure_debut else
+                                        'N/A' }}</td>
+                                    <td>{{ session.coach.nom if session.coach else 'N/A' }}</td>
+                                    <td>{{ session.type_session }}</td>
+                                    <td>
+                                        {% if session.statut == 'CONFIRMEE' %}
+                                        <span class="badge badge-success">Confirmée</span>
+                                        {% elif session.statut == 'RESERVEE' %}
+                                        <span class="badge badge-warning">Réservée</span>
+                                        {% elif session.statut == 'ANNULEE' %}
+                                        <span class="badge badge-danger">Annulée</span>
+                                        {% else %}
+                                        <span class="badge badge-info">{{ session.statut }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-secondary text-center py-3">
+                        <i class="fas fa-inbox"></i> Aucune session enregistrée
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

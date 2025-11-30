@@ -1,0 +1,149 @@
+<svg width="1100" height="850" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="3" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.1"/>
+    </filter>
+    
+    <marker id="crowFootOne" markerWidth="12" markerHeight="12" refX="0" refY="6" orient="auto">
+      <path d="M0,6 L12,6 M6,0 L6,12" stroke="#455a64" stroke-width="1.5" fill="none"/>
+    </marker>
+    
+    <marker id="crowFootMany" markerWidth="12" markerHeight="12" refX="0" refY="6" orient="auto">
+      <path d="M0,6 L12,6 M12,0 L6,6 L12,12" stroke="#455a64" stroke-width="1.5" fill="none"/>
+    </marker>
+  </defs>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto:wght@500;700&display=swap');
+    
+    /* Styles des tables */
+    .table-header { fill: #1976d2; stroke: #1565c0; stroke-width: 1; }
+    .table-body { fill: #ffffff; stroke: #cfd8dc; stroke-width: 1; filter: url(#shadow); }
+    
+    /* Styles du texte */
+    .header-text { font-family: 'Roboto', sans-serif; font-size: 14px; font-weight: 700; fill: #ffffff; text-anchor: middle; }
+    .row-text { font-family: 'Roboto Mono', monospace; font-size: 13px; fill: #263238; }
+    
+    /* Couleurs sémantiques */
+    .pk-text { font-weight: 700; fill: #d32f2f; } /* Clé Primaire en Rouge */
+    .fk-text { font-style: italic; fill: #7b1fa2; } /* Clé Etrangère en Violet */
+    .type-text { fill: #78909c; font-size: 11px; } /* Info type optionnelle */
+    
+    /* Connecteurs */
+    .connector { stroke: #455a64; stroke-width: 1.5; fill: none; }
+  </style>
+
+  <text x="550" y="40" font-family="Roboto" font-size="24" font-weight="700" text-anchor="middle" fill="#37474f">MLD - Salle de Sport</text>
+
+  <g transform="translate(420, 80)">
+    <rect x="0" y="0" width="240" height="145" class="table-body"/>
+    <rect x="0" y="0" width="240" height="30" class="table-header"/>
+    <text x="120" y="20" class="header-text">UTILISATEUR</text>
+    
+    <text x="15" y="55" class="row-text pk-text">PK  id_utilisateur</text>
+    <text x="15" y="75" class="row-text">    email (Unique)</text>
+    <text x="15" y="95" class="row-text">    mot_de_passe</text>
+    <text x="15" y="115" class="row-text">    role</text>
+    <text x="15" y="135" class="row-text">    date_creation</text>
+  </g>
+
+  <g transform="translate(100, 280)">
+    <rect x="0" y="0" width="240" height="145" class="table-body"/>
+    <rect x="0" y="0" width="240" height="30" class="table-header"/>
+    <text x="120" y="20" class="header-text">MEMBRE</text>
+    
+    <text x="15" y="55" class="row-text pk-text fk-text">PK,FK id_utilisateur</text>
+    <text x="15" y="75" class="row-text">      nom</text>
+    <text x="15" y="95" class="row-text">      prenom</text>
+    <text x="15" y="115" class="row-text">      date_naissance</text>
+    <text x="15" y="135" class="row-text">      telephone</text>
+  </g>
+
+  <g transform="translate(740, 280)">
+    <rect x="0" y="0" width="240" height="145" class="table-body"/>
+    <rect x="0" y="0" width="240" height="30" class="table-header"/>
+    <text x="120" y="20" class="header-text">COACH</text>
+    
+    <text x="15" y="55" class="row-text pk-text fk-text">PK,FK id_utilisateur</text>
+    <text x="15" y="75" class="row-text">      nom</text>
+    <text x="15" y="95" class="row-text">      prenom</text>
+    <text x="15" y="115" class="row-text">      specialite</text>
+    <text x="15" y="135" class="row-text">      taux_horaire</text>
+  </g>
+
+  <g transform="translate(760, 500)">
+    <rect x="0" y="0" width="220" height="125" class="table-body"/>
+    <rect x="0" y="0" width="220" height="30" class="table-header"/>
+    <text x="110" y="20" class="header-text">ABONNEMENT</text>
+    
+    <text x="15" y="55" class="row-text pk-text">PK  id_abonnement</text>
+    <text x="15" y="75" class="row-text">    nom</text>
+    <text x="15" y="95" class="row-text">    prix</text>
+    <text x="15" y="115" class="row-text">    duree_mois</text>
+  </g>
+
+  <g transform="translate(420, 500)">
+    <rect x="0" y="0" width="260" height="165" class="table-body"/>
+    <rect x="0" y="0" width="260" height="30" class="table-header"/>
+    <text x="130" y="20" class="header-text">SOUSCRIPTION</text>
+    
+    <text x="15" y="55" class="row-text pk-text">PK  id_souscription</text>
+    <text x="15" y="75" class="row-text fk-text">FK  id_membre</text>
+    <text x="15" y="95" class="row-text fk-text">FK  id_abonnement</text>
+    <text x="15" y="115" class="row-text">    date_debut</text>
+    <text x="15" y="135" class="row-text">    date_fin</text>
+    <text x="15" y="155" class="row-text">    statut</text>
+  </g>
+
+  <g transform="translate(420, 720)">
+    <rect x="0" y="0" width="260" height="125" class="table-body"/>
+    <rect x="0" y="0" width="260" height="30" class="table-header"/>
+    <text x="130" y="20" class="header-text">PAIEMENT</text>
+    
+    <text x="15" y="55" class="row-text pk-text">PK  id_paiement</text>
+    <text x="15" y="75" class="row-text fk-text">FK  id_souscription</text>
+    <text x="15" y="95" class="row-text">    montant</text>
+    <text x="15" y="115" class="row-text">    date_paiement</text>
+  </g>
+
+  <g transform="translate(80, 500)">
+    <rect x="0" y="0" width="260" height="165" class="table-body"/>
+    <rect x="0" y="0" width="260" height="30" class="table-header"/>
+    <text x="130" y="20" class="header-text">SESSION_COACHING</text>
+    
+    <text x="15" y="55" class="row-text pk-text">PK  id_session</text>
+    <text x="15" y="75" class="row-text fk-text">FK  id_membre</text>
+    <text x="15" y="95" class="row-text fk-text">FK  id_coach</text>
+    <text x="15" y="115" class="row-text">    date_heure_debut</text>
+    <text x="15" y="135" class="row-text">    duree_minutes</text>
+    <text x="15" y="155" class="row-text">    statut</text>
+  </g>
+
+  <g transform="translate(80, 720)">
+    <rect x="0" y="0" width="260" height="125" class="table-body"/>
+    <rect x="0" y="0" width="260" height="30" class="table-header"/>
+    <text x="130" y="20" class="header-text">ACCES</text>
+    
+    <text x="15" y="55" class="row-text pk-text">PK  id_acces</text>
+    <text x="15" y="75" class="row-text fk-text">FK  id_membre</text>
+    <text x="15" y="95" class="row-text">    date_heure_entree</text>
+    <text x="15" y="115" class="row-text">    date_heure_sortie</text>
+  </g>
+
+  <path d="M 420 150 L 320 150 L 320 280" class="connector" marker-start="url(#crowFootOne)" marker-end="url(#crowFootOne)"/>
+  
+  <path d="M 660 150 L 760 150 L 760 280" class="connector" marker-start="url(#crowFootOne)" marker-end="url(#crowFootOne)"/>
+
+  <path d="M 340 350 L 380 350 L 380 580 L 420 580" class="connector" marker-end="url(#crowFootMany)"/>
+  
+  <path d="M 760 560 L 680 560" class="connector" marker-start="url(#crowFootOne)" marker-end="url(#crowFootMany)"/>
+
+  <path d="M 550 665 L 550 720" class="connector" marker-start="url(#crowFootOne)" marker-end="url(#crowFootMany)"/>
+
+  <path d="M 210 425 L 210 500" class="connector" marker-start="url(#crowFootOne)" marker-end="url(#crowFootMany)"/>
+
+  <path d="M 860 425 L 860 470 L 310 470 L 310 500" class="connector" marker-start="url(#crowFootOne)" marker-end="url(#crowFootMany)"/>
+
+  <path d="M 150 425 L 150 720" class="connector" marker-start="url(#crowFootOne)" marker-end="url(#crowFootMany)"/>
+
+</svg>

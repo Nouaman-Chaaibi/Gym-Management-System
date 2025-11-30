@@ -1,0 +1,9 @@
+# URGENT: admin.py s'est corrompu
+
+Le fichier s'est cassé et manque les imports + le Blueprint.
+
+Avez-vous une backup de `app/routes/admin.py`?
+
+Si non, je dois le recréer complètement. 
+
+Confirmez et je vous envoie le fichier complet reconstruit.

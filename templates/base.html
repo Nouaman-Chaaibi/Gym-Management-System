@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Système de gestion de salle de sport - Gym Management">
+    <meta name="author" content="Gym Management Team">
+    <title>{% block title %}Gym Management{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('public.index') }}">
+          <i class="fas fa-dumbbell"></i> GYM
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('public.index') }}">
+                <i class="fas fa-home"></i> Accueil
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('public.about') }}">
+                <i class="fas fa-info-circle"></i> À propos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('public.abonnements') }}">
+                <i class="fas fa-tag"></i> Abonnements
+              </a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav ms-auto">
+            {% if current_user.is_authenticated %}
+              {% if current_user.role == 'ADMIN' %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+                    <i class="fas fa-chart-line"></i> Dashboard Admin
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('admin.membres') }}">
+                    <i class="fas fa-users"></i> Membres
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('admin.controle_acces') }}">
+                    <i class="fas fa-door-open"></i> Contrôle d'Accès
+                  </a>
+                </li>
+              {% elif current_user.role == 'COACH' %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('coach.planning') }}">
+                    <i class="fas fa-calendar-alt"></i> Mon Planning
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('coach.profil') }}">
+                    <i class="fas fa-user"></i> Mon Profil
+                  </a>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('membre.profil') }}">
+                    <i class="fas fa-user"></i> Mon Profil
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('membre.reserver') }}">
+                    <i class="fas fa-calendar-plus"></i> Réserver
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('membre.sessions') }}">
+                    <i class="fas fa-history"></i> Historique
+                  </a>
+                </li>
+              {% endif %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fas fa-user-circle"></i> {{ current_user.username }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                  </a></li>
+                </ul>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth.login') }}">
+                  <i class="fas fa-sign-in-alt"></i> Connexion
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link btn btn-primary btn-sm ms-2" href="{{ url_for('auth.register') }}">
+                  <i class="fas fa-user-plus"></i> Inscription
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-4">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div id="flash-messages">
+            {% for category, msg in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show animate-slide-down d-flex align-items-center" role="alert" data-auto-dismiss="5000">
+                {% if category == 'success' %}
+                  <i class="fas fa-check-circle me-2"></i>
+                {% elif category == 'danger' %}
+                  <i class="fas fa-exclamation-circle me-2"></i>
+                {% elif category == 'warning' %}
+                  <i class="fas fa-exclamation-triangle me-2"></i>
+                {% else %}
+                  <i class="fas fa-info-circle me-2"></i>
+                {% endif %}
+                <span class="flex-grow-1">{{ msg | safe }}</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mt-4 mb-5 animate-fade-in">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-4 mb-md-0">
+            <h5 class="mb-3">
+              <i class="fas fa-dumbbell text-primary"></i> Gym Management
+            </h5>
+            <p class="text-secondary">
+              Votre partenaire fitness pour une vie active et en bonne santé.
+            </p>
+          </div>
+          <div class="col-md-4 mb-4 mb-md-0">
+            <h6 class="mb-3">Liens Rapides</h6>
+            <ul class="list-unstyled">
+              <li><a href="{{ url_for('public.about') }}" class="text-secondary">À propos</a></li>
+              <li><a href="{{ url_for('public.abonnements') }}" class="text-secondary">Abonnements</a></li>
+              <li><a href="{{ url_for('auth.register') }}" class="text-secondary">Inscription</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h6 class="mb-3">Suivez-nous</h6>
+            <div class="d-flex gap-3">
+              <a href="#" class="text-secondary"><i class="fab fa-facebook fa-lg"></i></a>
+              <a href="#" class="text-secondary"><i class="fab fa-instagram fa-lg"></i></a>
+              <a href="#" class="text-secondary"><i class="fab fa-twitter fa-lg"></i></a>
+              <a href="#" class="text-secondary"><i class="fab fa-youtube fa-lg"></i></a>
+            </div>
+          </div>
+        </div>
+        <hr class="my-4" style="border-color: var(--color-border);">
+        <div class="text-center text-secondary">
+          <p class="mb-0">&copy; {{ current_year }} Gym Management. Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <!-- Auto-dismiss flash messages -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('[data-auto-dismiss]');
+        flashMessages.forEach(function(msg) {
+          const delay = parseInt(msg.getAttribute('data-auto-dismiss')) || 5000;
+          setTimeout(function() {
+            const bsAlert = new bootstrap.Alert(msg);
+            bsAlert.close();
+          }, delay);
+        });
+      });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

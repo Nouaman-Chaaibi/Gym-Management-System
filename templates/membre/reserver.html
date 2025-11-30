@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Réserver une Session - Membre{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animate-slide-up">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title text-center mb-4">
+          <i class="fas fa-calendar-plus text-success"></i> Réserver une Session de Coaching
+        </h3>
+
+        <form method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="fas fa-user-tie"></i> Choisir un Coach
+            </label>
+            <select name="coach_id" class="form-select" required>
+              <option value="">-- Sélectionnez un coach --</option>
+              {% if coaches %}
+              {% for coach in coaches %}
+              <option value="{{ coach.coach_id }}">
+                {{ coach.nom }} {{ coach.prenom }} - {{ coach.specialites }}
+              </option>
+              {% endfor %}
+              {% else %}
+              <option value="" disabled>Aucun coach disponible</option>
+              {% endif %}
+            </select>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <label class="form-label">
+                <i class="fas fa-calendar"></i> Date
+              </label>
+              <input type="date" name="date" class="form-control" required
+                min="{{ now().strftime('%Y-%m-%d') if now else '' }}">
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <label class="form-label">
+                <i class="fas fa-clock"></i> Heure
+              </label>
+              <input type="time" name="time" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="fas fa-dumbbell"></i> Type de Session
+            </label>
+            <select name="type" class="form-select">
+              <option value="Individuelle">Individuelle</option>
+              <option value="Groupe">Groupe</option>
+              <option value="Musculation">Musculation</option>
+              <option value="Cardio">Cardio</option>
+              <option value="Yoga">Yoga</option>
+              <option value="CrossFit">CrossFit</option>
+            </select>
+          </div>
+
+          <div class="alert alert-info mb-4">
+            <i class="fas fa-info-circle"></i>
+            <strong>Note:</strong> La session durera 1 heure. Le coach confirmera votre réservation dans les 24 heures.
+          </div>
+
+          <div class="d-flex gap-3">
+            <button class="btn btn-success flex-fill" type="submit">
+              <i class="fas fa-check-circle"></i> Confirmer la Réservation
+            </button>
+            <a href="{{ url_for('membre.profil') }}" class="btn btn-ghost">
+              <i class="fas fa-times"></i> Annuler
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

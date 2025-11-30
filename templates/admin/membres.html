@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion des Membres - Admin{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+  <!--Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1><i class="fas fa-users text-primary"></i> Gestion des Membres</h1>
+      <p class="text-secondary">{{ membres|length }} membre(s) enregistré(s)</p>
+    </div>
+    <div>
+      <a href="{{ url_for('admin.ajouter_membre') }}" class="btn btn-primary">
+        <i class="fas fa-user-plus"></i> Ajouter un Membre
+      </a>
+    </div>
+  </div>
+
+  <!-- Search and Filter -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="input-group">
+            <i class="fas fa-search input-group-icon"></i>
+            <input type="text" class="form-control" placeholder="Rechercher un membre..." id="searchInput">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" id="statusFilter"
+            onchange="window.location.href='{{ url_for('admin.membres') }}?statut=' + this.value">
+            <option value="TOUS" {% if statut_filter=='TOUS' %}selected{% endif %}>Tous les statuts</option>
+            <option value="ACTIF" {% if statut_filter=='ACTIF' %}selected{% endif %}>Actif</option>
+            <option value="INACTIF" {% if statut_filter=='INACTIF' %}selected{% endif %}>Inactif</option>
+            <option value="SUSPENDU" {% if statut_filter=='SUSPENDU' %}selected{% endif %}>Suspendu</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <a href="{{ url_for('admin.export_membres') }}" class="btn btn-success w-100">
+            <i class="fas fa-file-export"></i> Exporter
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Members Table -->
+  {% if membres %}
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped" id="membresTable">
+          <thead>
+            <tr>
+              <th><i class="fas fa-hashtag"></i> ID</th>
+              <th><i class="fas fa-user"></i> Nom Complet</th>
+              <th><i class="fas fa-envelope"></i> Email</th>
+              <th><i class="fas fa-phone"></i> Téléphone</th>
+              <th><i class="fas fa-calendar"></i> Inscription</th>
+              <th><i class="fas fa-info-circle"></i> Statut</th>
+              <th><i class="fas fa-cog"></i> Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for membre in membres %}
+            <tr>
+              <td>{{ membre.membre_id }}</td>
+              <td>
+                <strong>{{ membre.nom }} {{ membre.prenom }}</strong>
+              </td>
+              <td>
+                <a href="mailto:{{ membre.email }}">{{ membre.email }}</a>
+              </td>
+              <td>{{ membre.telephone }}</td>
+              <td>{{ membre.date_inscription.strftime('%d/%m/%Y') if membre.date_inscription else 'N/A' }}</td>
+              <td>
+                {% if membre.statut == 'ACTIF' %}
+                <span class="badge badge-success">
+                  <i class="fas fa-check"></i> Actif
+                </span>
+                {% elif membre.statut == 'INACTIF' %}
+                <span class="badge badge-danger">
+                  <i class="fas fa-times"></i> Inactif
+                </span>
+                {% elif membre.statut == 'SUSPENDU' %}
+                <span class="badge badge-warning">
+                  <i class="fas fa-pause"></i> Suspendu
+                </span>
+                {% else %}
+                <span class="badge badge-info">{{ membre.statut }}</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="d-flex gap-2">
+                  <a href="{{ url_for('admin.voir_membre', membre_id=membre.membre_id) }}"
+                    class="btn btn-sm btn-primary" title="Voir détails">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <a href="{{ url_for('admin.modifier_membre', membre_id=membre.membre_id) }}"
+                    class="btn btn-sm btn-secondary" title="Modifier">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <form method="post" action="{{ url_for('admin.supprimer_membre', membre_id=membre.membre_id) }}"
+                    style="display: inline;"
+                    onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver ce membre ?');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <i class="fas fa-users fa-3x text-secondary mb-3"></i>
+      <h5 class="text-secondary">Aucun membre trouvé</h5>
+      <p class="text-secondary">Commencez par ajouter votre premier membre</p>
+      <a href="{{ url_for('admin.ajouter_membre') }}" class="btn btn-primary mt-3">
+        <i class="fas fa-user-plus"></i> Ajouter un Membre
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Simple search functionality
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('membresTable');
+
+    if (searchInput && table) {
+      searchInput.addEventListener('input', filterTable);
+
+      function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+        for (let row of rows) {
+          const text = row.textContent.toLowerCase();
+          const matchesSearch = text.includes(searchTerm);
+          row.style.display = matchesSearch ? '' : 'none';
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

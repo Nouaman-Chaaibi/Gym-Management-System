@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Inscription - Gym Management{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animate-slide-up">
+  <div class="col-md-8">
+    <div class="card-glass">
+      <div class="card-body">
+        <div class="text-center mb-4">
+          <i class="fas fa-user-plus fa-3x text-success mb-3"></i>
+          <h3 class="card-title">Créer un Compte</h3>
+          <p class="text-secondary">Rejoignez notre communauté fitness dès aujourd'hui</p>
+        </div>
+
+        <form method="post" id="registerForm">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                <i class="fas fa-user"></i> Nom
+              </label>
+              <input name="nom" class="form-control" placeholder="Votre nom de famille" required autofocus>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                <i class="fas fa-user"></i> Prénom
+              </label>
+              <input name="prenom" class="form-control" placeholder="Votre prénom" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">
+              <i class="fas fa-envelope"></i> Email
+            </label>
+            <div class="input-group">
+              <i class="fas fa-envelope input-group-icon"></i>
+              <input name="email" type="email" class="form-control" placeholder="votre.email@exemple.com" required
+                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+            </div>
+            <small class="text-secondary">
+              <i class="fas fa-info-circle"></i> Format: exemple@domaine.com (sera votre nom d'utilisateur)
+            </small>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                <i class="fas fa-lock"></i> Mot de passe
+              </label>
+              <div class="input-group">
+                <i class="fas fa-lock input-group-icon"></i>
+                <input name="password" type="password" class="form-control" placeholder="Minimum 8 caractères" required
+                  minlength="8">
+              </div>
+              <small class="text-secondary">
+                <i class="fas fa-info-circle"></i> Au moins 8 caractères
+              </small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                <i class="fas fa-lock"></i> Confirmer le mot de passe
+              </label>
+              <div class="input-group">
+                <i class="fas fa-lock input-group-icon"></i>
+                <input name="password_confirm" type="password" class="form-control"
+                  placeholder="Répétez le mot de passe" required minlength="8">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                <i class="fas fa-phone"></i> Téléphone
+              </label>
+              <div class="input-group">
+                <i class="fas fa-phone input-group-icon"></i>
+                <input name="telephone" type="tel" class="form-control" placeholder="+212612345678" required
+                  pattern="^\+[0-9]{12}$">
+              </div>
+              <small class="text-secondary">
+                <i class="fas fa-info-circle"></i> Format: +212612345678
+              </small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                <i class="fas fa-calendar"></i> Date de Naissance *
+              </label>
+              <div class="input-group">
+                <i class="fas fa-calendar input-group-icon"></i>
+                <input name="date_naissance" type="date" id="date_naissance" class="form-control" max="{{ today }}" required>
+              </div>
+              <small class="text-secondary">
+                <i class="fas fa-info-circle"></i> Vous devez avoir au moins 16 ans (vérifié lors de l'inscription)
+              </small>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="fas fa-map-marker-alt"></i> Adresse (optionnel)
+            </label>
+            <div class="input-group">
+              <i class="fas fa-map-marker-alt input-group-icon"></i>
+              <input name="adresse" class="form-control" placeholder="Votre adresse complète">
+            </div>
+          </div>
+
+          <div class="alert alert-warning mb-4">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Important:</strong> Conservez bien votre mot de passe.
+          </div>
+
+          <button class="btn btn-success w-100 mb-3" type="submit">
+            <i class="fas fa-check-circle"></i> Créer mon compte
+          </button>
+
+          <div class="text-center">
+            <p class="text-secondary mb-2">Vous avez déjà un compte ?</p>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-ghost w-100">
+              <i class="fas fa-sign-in-alt"></i> Se connecter
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('registerForm');
+    const password = form.querySelector('[name="password"]');
+    const passwordConfirm = form.querySelector('[name="password_confirm"]');
+
+    form.addEventListener('submit', function (e) {
+      if (password.value !== passwordConfirm.value) {
+        e.preventDefault();
+        alert('Les mots de passe ne correspondent pas!');
+        passwordConfirm.focus();
+        return false;
+      }
+    });
+  });
+</script>
+{% endblock %}

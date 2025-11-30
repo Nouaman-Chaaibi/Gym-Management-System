@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}À Propos - Gym Management{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h1><i class="fas fa-info-circle text-primary"></i> À Propos</h1>
+        <p class="text-secondary lead">Découvrez qui nous sommes et ce qui nous rend unique</p>
+    </div>
+
+    <!-- Mission Section -->
+    <div class="row mb-5">
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="mb-4">
+                        <i class="fas fa-bullseye text-primary"></i> Notre Mission
+                    </h3>
+                    <p class="text-secondary">
+                        Notre mission est de créer une communauté fitness accueillante et motivante où chaque membre
+                        peut atteindre ses objectifs personnels. Nous croyons que la santé et le bien-être sont
+                        accessibles à tous.
+                    </p>
+                    <p class="text-secondary">
+                        Avec des équipements de pointe, des coachs certifiés et des programmes personnalisés, nous vous
+                        accompagnons à chaque étape de votre transformation.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="mb-4">
+                        <i class="fas fa-trophy text-warning"></i> Nos Valeurs
+                    </h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <strong>Excellence:</strong> <span class="text-secondary">Des services de qualité
+                                supérieure</span>
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <strong>Communauté:</strong> <span class="text-secondary">Un environnement
+                                bienveillant</span>
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <strong>Innovation:</strong> <span class="text-secondary">Équipements et méthodes
+                                modernes</span>
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <strong>Résultats:</strong> <span class="text-secondary">Votre réussite est notre
+                                priorité</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Facilities Section -->
+    <div class="mb-5">
+        <h2 class="text-center mb-4">
+            <i class="fas fa-building text-info"></i> Nos Équipements
+        </h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-dumbbell fa-3x text-primary mb-3"></i>
+                        <h5>Espace Musculation</h5>
+                        <p class="text-secondary">
+                            Machines professionnelles, haltères, bancs et racks pour tous vos besoins
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-running fa-3x text-success mb-3"></i>
+                        <h5>Zone Cardio</h5>
+                        <p class="text-secondary">
+                            Tapis de course, vélos, elliptiques avec écrans interactifs
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-spa fa-3x text-info mb-3"></i>
+                        <h5>Espace Wellness</h5>
+                        <p class="text-secondary">
+                            Sauna, spa, vestiaires modernes et espace détente
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule & Contact Info -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-4">
+                        <i class="fas fa-clock text-warning"></i> Horaires d'Ouverture
+                    </h4>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td><strong>Lundi - Vendredi</strong></td>
+                                <td class="text-end">06:00 - 22:00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Samedi</strong></td>
+                                <td class="text-end">08:00 - 20:00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Dimanche</strong></td>
+                                <td class="text-end">09:00 - 18:00</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    <span class="badge badge-success">
+                                        <i class="fas fa-check"></i> Ouvert 7j/7
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-4">
+                        <i class="fas fa-envelope text-primary"></i> Contactez-Nous
+                    </h4>
+                    <div class="mb-3">
+                        <i class="fas fa-map-marker-alt text-danger"></i>
+                        <strong> Adresse:</strong><br>
+                        <span class="text-secondary ms-4">123 Rue du Sport, 75001 Paris</span>
+                    </div>
+                    <div class="mb-3">
+                        <i class="fas fa-phone text-success"></i>
+                        <strong> Téléphone:</strong><br>
+                        <span class="text-secondary ms-4">+33 1 23 45 67 89</span>
+                    </div>
+                    <div class="mb-3">
+                        <i class="fas fa-envelope text-info"></i>
+                        <strong> Email:</strong><br>
+                        <span class="text-secondary ms-4">contact@gym-management.fr</span>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-primary w-100">
+                            <i class="fas fa-user-plus"></i> Rejoignez-Nous
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

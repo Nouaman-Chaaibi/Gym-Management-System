@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Profil - Membre{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+  <h1 class="mb-4"><i class="fas fa-user text-primary"></i> Mon Profil</h1>
+
+  {% if membre %}
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="mb-4"><i class="fas fa-id-card text-info"></i> Informations Personnelles</h5>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <p class="mb-1 text-secondary">Nom Complet</p>
+              <h6>{{ membre.nom }} {{ membre.prenom }}</h6>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <p class="mb-1 text-secondary">Email</p>
+              <h6>{{ membre.email }}</h6>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <p class="mb-1 text-secondary">Téléphone</p>
+              <h6>{{ membre.telephone }}</h6>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <p class="mb-1 text-secondary">Date de Naissance</p>
+              <h6>{{ membre.date_naissance.strftime('%d/%m/%Y') if membre.date_naissance else 'N/A' }}</h6>
+            </div>
+
+            <div class="col-12 mb-3">
+              <p class="mb-1 text-secondary">Adresse</p>
+              <h6>{{ membre.adresse or 'Non renseignée' }}</h6>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <p class="mb-1 text-secondary">Date d'Inscription</p>
+              <h6>{{ membre.date_inscription.strftime('%d/%m/%Y') if membre.date_inscription else 'N/A' }}</h6>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <p class="mb-1 text-secondary">Statut</p>
+              {% if membre.statut == 'ACTIF' %}
+              <span class="badge badge-success"><i class="fas fa-check"></i> Actif</span>
+              {% else %}
+              <span class="badge badge-danger">{{ membre.statut }}</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <a href="{{ url_for('membre.modifier_profil') }}" class="btn btn-primary mt-3">
+            <i class="fas fa-edit"></i> Modifier mes Informations
+          </a>
+        </div>
+      </div>
+
+      <!-- Subscription Card -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="mb-4"><i class="fas fa-tag text-warning"></i> Mon Abonnement</h5>
+
+          {% if souscription %}
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <p class="mb-1 text-secondary">Type d'Abonnement</p>
+              <h6>{{ souscription.abonnement.nom if souscription.abonnement else 'N/A' }}</h6>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <p class="mb-1 text-secondary">Statut</p>
+              {% if souscription.statut == 'ACTIF' %}
+              <span class="badge badge-success"><i class="fas fa-check"></i> Actif</span>
+              {% elif souscription.statut == 'EN_ATTENTE' %}
+              <span class="badge badge-warning"><i class="fas fa-clock"></i> En attente</span>
+              {% elif souscription.statut == 'EXPIRE' %}
+              <span class="badge badge-danger"><i class="fas fa-times"></i> Expiré</span>
+              {% else %}
+              <span class="badge badge-info">{{ souscription.statut }}</span>
+              {% endif %}
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <p class="mb-1 text-secondary">Date de Début</p>
+              <h6>{{ souscription.date_debut.strftime('%d/%m/%Y') if souscription.date_debut else 'N/A' }}</h6>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <p class="mb-1 text-secondary">Date de Fin</p>
+              <h6>{{ souscription.date_fin.strftime('%d/%m/%Y') if souscription.date_fin else 'N/A' }}</h6>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <p class="mb-1 text-secondary">Sessions Restantes</p>
+              <h6 class="text-primary">{{ souscription.sessions_restantes }}</h6>
+            </div>
+          </div>
+
+          <form method="post" action="{{ url_for('membre.renouveler') }}" class="mt-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-success" type="submit">
+              <i class="fas fa-sync"></i> Renouveler l'Abonnement
+            </button>
+          </form>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
+            <p class="text-secondary">Vous n'avez pas d'abonnement actif</p>
+            <a href="{{ url_for('public.abonnements') }}" class="btn btn-primary">
+              <i class="fas fa-shopping-cart"></i> Souscrire un Abonnement
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card mb-3">
+        <div class="card-body text-center">
+          <div class="card-stat-icon mx-auto mb-3"
+            style="background: rgba(99, 102, 241, 0.2); color: var(--color-primary);">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <h5>{{ membre.nom }} {{ membre.prenom }}</h5>
+          <p class="text-secondary mb-3">Membre depuis {{ membre.date_inscription.strftime('%B %Y') if
+            membre.date_inscription else 'N/A' }}</p>
+          <a href="{{ url_for('membre.sessions') }}" class="btn btn-primary w-100 mb-2">
+            <i class="fas fa-history"></i> Mon Historique
+          </a>
+          <a href="{{ url_for('membre.reserver') }}" class="btn btn-success w-100">
+            <i class="fas fa-calendar-plus"></i> Réserver une Session
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <i class="fas fa-exclamation-circle fa-3x text-warning mb-3"></i>
+      <h5 class="text-secondary">Profil non trouvé</h5>
+      <p class="text-secondary">Impossible de charger les informations du profil</p>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

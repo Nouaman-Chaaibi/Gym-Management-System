@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Admin - Gym Management{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1><i class="fas fa-chart-line text-primary"></i> Dashboard Administrateur</h1>
+      <p class="text-secondary">Vue d'ensemble des activités de la salle</p>
+    </div>
+    <div>
+      <span class="text-secondary">
+        <i class="fas fa-clock"></i> Dernière mise à jour: {{ now().strftime('%d/%m/%Y %H:%M') }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-4">
+      <div class="card-stat">
+        <div class="card-stat-icon" style="background: rgba(99, 102, 241, 0.2); color: var(--color-primary);">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="card-stat-value">{{ stats.membres_actifs }}</div>
+        <div class="card-stat-label">Membres Actifs</div>
+        <div class="mt-2">
+          <a href="{{ url_for('admin.membres') }}" class="btn btn-sm btn-ghost">
+            <i class="fas fa-arrow-right"></i> Voir tous
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-stat">
+        <div class="card-stat-icon" style="background: rgba(16, 185, 129, 0.2); color: var(--color-success);">
+          <i class="fas fa-euro-sign"></i>
+        </div>
+        <div class="card-stat-value">{{ "%.2f"|format(stats.revenus_mois) }}€</div>
+        <div class="card-stat-label">Revenus Ce Mois</div>
+        <div class="mt-2">
+          <span class="badge badge-success">
+            <i class="fas fa-arrow-up"></i> En cours
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-stat">
+        <div class="card-stat-icon" style="background: rgba(245, 158, 11, 0.2); color: var(--color-warning);">
+          <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="card-stat-value">{{ stats.sessions_aujourd_hui }}</div>
+        <div class="card-stat-label">Sessions Aujourd'hui</div>
+        <div class="mt-2">
+          <span class="text-secondary">
+            <i class="fas fa-clock"></i> En cours
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="card mb-5">
+    <div class="card-body">
+      <h5 class="mb-4">
+        <i class="fas fa-bolt text-warning"></i> Actions Rapides
+      </h5>
+      <div class="d-flex gap-3 flex-wrap">
+        <a href="{{ url_for('admin.membres') }}" class="btn btn-primary">
+          <i class="fas fa-users"></i> Gérer les Membres
+        </a>
+        <a href="{{ url_for('admin.abonnements') }}" class="btn btn-secondary">
+          <i class="fas fa-tag"></i> Gérer les Abonnements
+        </a>
+        <a href="{{ url_for('admin.controle_acces') }}" class="btn btn-success">
+          <i class="fas fa-door-open"></i> Contrôle d'Accès
+        </a>
+        <button class="btn btn-success">
+          <i class="fas fa-file-export"></i> Exporter les Données
+        </button>
+        <button class="btn btn-info">
+          <i class="fas fa-chart-bar"></i> Rapports
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Payments -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="mb-4">
+        <i class="fas fa-receipt text-success"></i> Derniers Paiements
+      </h5>
+
+      {% if recent_payments %}
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th><i class="fas fa-hashtag"></i> ID</th>
+              <th><i class="fas fa-barcode"></i> Référence</th>
+              <th><i class="fas fa-euro-sign"></i> Montant</th>
+              <th><i class="fas fa-calendar"></i> Date</th>
+              <th><i class="fas fa-credit-card"></i> Méthode</th>
+              <th><i class="fas fa-info-circle"></i> Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for payment in recent_payments %}
+            <tr>
+              <td>{{ payment.paiement_id }}</td>
+              <td><code>{{ payment.reference or 'N/A' }}</code></td>
+              <td class="text-success">{{ "%.2f"|format(payment.montant) }}€</td>
+              <td>{{ payment.date_paiement.strftime('%d/%m/%Y') if payment.date_paiement else 'N/A' }}</td>
+              <td>
+                {% if payment.methode_paiement == 'CARTE' %}
+                <i class="fas fa-credit-card"></i> Carte
+                {% elif payment.methode_paiement == 'ESPECES' %}
+                <i class="fas fa-money-bill"></i> Espèces
+                {% elif payment.methode_paiement == 'VIREMENT' %}
+                <i class="fas fa-exchange-alt"></i> Virement
+                {% else %}
+                {{ payment.methode_paiement }}
+                {% endif %}
+              </td>
+              <td>
+                {% if payment.statut_paiement == 'VALIDE' %}
+                <span class="badge badge-success">
+                  <i class="fas fa-check"></i> Validé
+                </span>
+                {% elif payment.statut_paiement == 'EN_ATTENTE' %}
+                <span class="badge badge-warning">
+                  <i class="fas fa-clock"></i> En attente
+                </span>
+                {% elif payment.statut_paiement == 'REFUSE' %}
+                <span class="badge badge-danger">
+                  <i class="fas fa-times"></i> Refusé
+                </span>
+                {% else %}
+                <span class="badge badge-info">{{ payment.statut_paiement }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-5 text-secondary">
+        <i class="fas fa-inbox fa-3x mb-3"></i>
+        <p>Aucun paiement récent</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

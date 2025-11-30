@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Historique - Membre{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+  <h1 class="mb-4"><i class="fas fa-history text-primary"></i> Mon Historique</h1>
+
+  <!-- Tabs Navigation -->
+  <ul class="nav nav-tabs mb-4" id="historyTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="sessions-tab" data-bs-toggle="tab" data-bs-target="#sessions" type="button"
+        role="tab">
+        <i class="fas fa-dumbbell"></i> Mes Sessions
+        {% if sessions %}<span class="badge badge-primary ms-2">{{ sessions|length }}</span>{% endif %}
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="paiements-tab" data-bs-toggle="tab" data-bs-target="#paiements" type="button"
+        role="tab">
+        <i class="fas fa-euro-sign"></i> Paiements
+        {% if paiements %}<span class="badge badge-success ms-2">{{ paiements|length }}</span>{% endif %}
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="acces-tab" data-bs-toggle="tab" data-bs-target="#acces" type="button" role="tab">
+        <i class="fas fa-door-open"></i> Accès
+        {% if acces %}<span class="badge badge-info ms-2">{{ acces|length }}</span>{% endif %}
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="historyTabsContent">
+    <!-- Sessions Tab -->
+    <div class="tab-pane fade show active" id="sessions" role="tabpanel">
+      {% if sessions %}
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th><i class="fas fa-hashtag"></i> ID</th>
+                  <th><i class="fas fa-user-tie"></i> Coach</th>
+                  <th><i class="fas fa-calendar"></i> Date & Heure</th>
+                  <th><i class="fas fa-dumbbell"></i> Type</th>
+                  <th><i class="fas fa-info-circle"></i> Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for session in sessions %}
+                <tr>
+                  <td>{{ session.session_id }}</td>
+                  <td>{{ session.coach_info.nom if session.coach_info else 'N/A' }} {{ session.coach_info.prenom if
+                    session.coach_info else '' }}</td>
+                  <td>{{ session.date_heure_debut.strftime('%d/%m/%Y %H:%M') if session.date_heure_debut else 'N/A' }}
+                  </td>
+                  <td>{{ session.type_session }}</td>
+                  <td>
+                    {% if session.statut == 'RESERVEE' %}
+                    <span class="badge badge-warning"><i class="fas fa-clock"></i> Réservée</span>
+                    {% elif session.statut == 'CONFIRMEE' %}
+                    <span class="badge badge-success"><i class="fas fa-check"></i> Confirmée</span>
+                    {% elif session.statut == 'ANNULEE' %}
+                    <span class="badge badge-danger"><i class="fas fa-times"></i> Annulée</span>
+                    {% elif session.statut == 'TERMINEE' %}
+                    <span class="badge badge-info"><i class="fas fa-check-double"></i> Terminée</span>
+                    {% else %}
+                    <span class="badge badge-info">{{ session.statut }}</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="card">
+        <div class="card-body text-center py-5">
+          <i class="fas fa-calendar-times fa-3x text-secondary mb-3"></i>
+          <h5 class="text-secondary">Aucune session</h5>
+          <p class="text-secondary">Vous n'avez pas encore réservé de session</p>
+          <a href="{{ url_for('membre.reserver') }}" class="btn btn-primary mt-3">
+            <i class="fas fa-calendar-plus"></i> Réserver une Session
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Paiements Tab -->
+    <div class="tab-pane fade" id="paiements" role="tabpanel">
+      {% if paiements %}
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th><i class="fas fa-hashtag"></i> ID</th>
+                  <th><i class="fas fa-barcode"></i> Référence</th>
+                  <th><i class="fas fa-euro-sign"></i> Montant</th>
+                  <th><i class="fas fa-calendar"></i> Date</th>
+                  <th><i class="fas fa-credit-card"></i> Méthode</th>
+                  <th><i class="fas fa-info-circle"></i> Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for paiement in paiements %}
+                <tr>
+                  <td>{{ paiement.paiement_id }}</td>
+                  <td><code>{{ paiement.reference or 'N/A' }}</code></td>
+                  <td class="text-success"><strong>{{ "%.2f"|format(paiement.montant) }}€</strong></td>
+                  <td>{{ paiement.date_paiement.strftime('%d/%m/%Y') if paiement.date_paiement else 'N/A' }}</td>
+                  <td>{{ paiement.methode_paiement }}</td>
+                  <td>
+                    {% if paiement.statut_paiement == 'VALIDE' %}
+                    <span class="badge badge-success"><i class="fas fa-check"></i> Validé</span>
+                    {% elif paiement.statut_paiement == 'EN_ATTENTE' %}
+                    <span class="badge badge-warning"><i class="fas fa-clock"></i> En attente</span>
+                    {% elif paiement.statut_paiement == 'REFUSE' %}
+                    <span class="badge badge-danger"><i class="fas fa-times"></i> Refusé</span>
+                    {% else %}
+                    <span class="badge badge-info">{{ paiement.statut_paiement }}</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="card">
+        <div class="card-body text-center py-5">
+          <i class="fas fa-receipt fa-3x text-secondary mb-3"></i>
+          <h5 class="text-secondary">Aucun paiement</h5>
+          <p class="text-secondary">Votre historique de paiements apparaîtra ici</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Accès Tab -->
+    <div class="tab-pane fade" id="acces" role="tabpanel">
+      {% if acces %}
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th><i class="fas fa-hashtag"></i> ID</th>
+                  <th><i class="fas fa-sign-in-alt"></i> Entrée</th>
+                  <th><i class="fas fa-sign-out-alt"></i> Sortie</th>
+                  <th><i class="fas fa-clock"></i> Durée</th>
+                  <th><i class="fas fa-info-circle"></i> Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for access in acces %}
+                <tr>
+                  <td>{{ access.acces_id }}</td>
+                  <td>{{ access.date_heure_entree.strftime('%d/%m/%Y %H:%M') if access.date_heure_entree else 'N/A' }}
+                  </td>
+                  <td>{{ access.date_heure_sortie.strftime('%d/%m/%Y %H:%M') if access.date_heure_sortie else '-' }}
+                  </td>
+                  <td>
+                    {% if access.date_heure_entree and access.date_heure_sortie %}
+                    {% set duration = access.date_heure_sortie - access.date_heure_entree %}
+                    {{ duration.seconds // 3600 }}h {{ (duration.seconds % 3600) // 60 }}min
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if access.statut_acces == 'EN_COURS' %}
+                    <span class="badge badge-success"><i class="fas fa-circle"></i> En cours</span>
+                    {% elif access.statut_acces == 'TERMINE' %}
+                    <span class="badge badge-info"><i class="fas fa-check"></i> Terminé</span>
+                    {% elif access.statut_acces == 'REFUSE' %}
+                    <span class="badge badge-danger"><i class="fas fa-times"></i> Refusé</span>
+                    {% else %}
+                    <span class="badge badge-info">{{ access.statut_acces }}</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="card">
+        <div class="card-body text-center py-5">
+          <i class="fas fa-door-open fa-3x text-secondary mb-3"></i>
+          <h5 class="text-secondary">Aucun accès enregistré</h5>
+          <p class="text-secondary">Votre historique d'accès à la salle apparaîtra ici</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

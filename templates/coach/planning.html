@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Planning - Coach{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1><i class="fas fa-calendar-alt text-primary"></i> Mon Planning</h1>
+      <p class="text-secondary">{{ sessions|length }} session(s) planifiée(s)</p>
+    </div>
+  </div>
+
+  {% if sessions %}
+  <div class="row g-4">
+    {% for session in sessions %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <h5>Session #{{ session.session_id }}</h5>
+            {% if session.statut == 'RESERVEE' %}
+            <span class="badge badge-warning"><i class="fas fa-clock"></i> Réservée</span>
+            {% elif session.statut == 'CONFIRMEE' %}
+            <span class="badge badge-success"><i class="fas fa-check"></i> Confirmée</span>
+            {% elif session.statut == 'ANNULEE' %}
+            <span class="badge badge-danger"><i class="fas fa-times"></i> Annulée</span>
+            {% elif session.statut == 'TERMINEE' %}
+            <span class="badge badge-info"><i class="fas fa-check-double"></i> Terminée</span>
+            {% else %}
+            <span class="badge badge-info">{{ session.statut }}</span>
+            {% endif %}
+          </div>
+
+          <p class="mb-2">
+            <i class="fas fa-user text-primary"></i>
+            <strong>Membre:</strong> {{ session.membre_info.nom if session.membre_info else 'N/A' }} {{
+            session.membre_info.prenom if session.membre_info else '' }}
+          </p>
+
+          <p class="mb-2">
+            <i class="fas fa-calendar text-info"></i>
+            <strong>Date:</strong> {{ session.date_heure_debut.strftime('%d/%m/%Y') if session.date_heure_debut else
+            'N/A' }}
+          </p>
+
+          <p class="mb-2">
+            <i class="fas fa-clock text-warning"></i>
+            <strong>Heure:</strong> {{ session.date_heure_debut.strftime('%H:%M') if session.date_heure_debut else 'N/A'
+            }} - {{ session.date_heure_fin.strftime('%H:%M') if session.date_heure_fin else 'N/A' }}
+          </p>
+
+          <p class="mb-3">
+            <i class="fas fa-dumbbell text-success"></i>
+            <strong>Type:</strong> {{ session.type_session }}
+          </p>
+
+          {% if session.notes %}
+          <p class="text-secondary mb-3"><em>Notes: {{ session.notes }}</em></p>
+          {% endif %}
+
+          <div class="d-flex gap-2">
+            {% if session.statut == 'RESERVEE' %}
+            <a href="{{ url_for('coach.confirmer_session', id=session.session_id) }}"
+              class="btn btn-sm btn-success flex-fill">
+              <i class="fas fa-check"></i> Confirmer
+            </a>
+            <a href="{{ url_for('coach.annuler_session', id=session.session_id) }}" class="btn btn-sm btn-danger">
+              <i class="fas fa-times"></i>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <i class="fas fa-calendar-times fa-3x text-secondary mb-3"></i>
+      <h5 class="text-secondary">Aucune session planifiée</h5>
+      <p class="text-secondary">Vous n'avez pas de sessions à venir pour le moment</p>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

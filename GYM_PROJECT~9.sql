@@ -1,0 +1,1 @@
+SELECT * from auth_users;

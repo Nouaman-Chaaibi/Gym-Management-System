@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Bienvenue - Gym Management{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h1 class="hero-title">
+            <i class="fas fa-dumbbell"></i> Transformez Votre Corps
+        </h1>
+        <p class="hero-subtitle">
+            Rejoignez la meilleure salle de sport avec des équipements modernes, des coachs professionnels et une
+            communauté motivante
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-user-plus"></i> Commencer Maintenant
+            </a>
+            <a href="{{ url_for('public.abonnements') }}" class="btn btn-secondary btn-lg">
+                <i class="fas fa-tag"></i> Voir les Offres
+            </a>
+            {% else %}
+            {% if current_user.role == 'ADMIN' %}
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-chart-line"></i> Dashboard Admin
+            </a>
+            {% elif current_user.role == 'COACH' %}
+            <a href="{{ url_for('coach.planning') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-calendar-alt"></i> Mon Planning
+            </a>
+            {% else %}
+            <a href="{{ url_for('membre.profil') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-user"></i> Mon Profil
+            </a>
+            <a href="{{ url_for('membre.reserver') }}" class="btn btn-secondary btn-lg">
+                <i class="fas fa-calendar-plus"></i> Réserver une Session
+            </a>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="my-5">
+    <div class="container">
+        <h2 class="text-center mb-5">
+            <i class="fas fa-star text-warning"></i> Pourquoi Nous Choisir
+        </h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-dumbbell fa-3x text-primary"></i>
+                        </div>
+                        <h4>Équipements Modernes</h4>
+                        <p class="text-secondary">
+                            Des machines de dernière génération pour tous vos besoins d'entraînement
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-user-tie fa-3x text-success"></i>
+                        </div>
+                        <h4>Coachs Certifiés</h4>
+                        <p class="text-secondary">
+                            Des professionnels expérimentés pour vous guider vers vos objectifs
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-clock fa-3x text-info"></i>
+                        </div>
+                        <h4>Horaires Flexibles</h4>
+                        <p class="text-secondary">
+                            Ouvert 7j/7 pour s'adapter à votre emploi du temps
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="my-5">
+    <div class="container">
+        <div class="card-glass p-5">
+            <div class="row text-center g-4">
+                <div class="col-md-3">
+                    <div class="card-stat-value">500+</div>
+                    <div class="card-stat-label">Membres Actifs</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-stat-value">15+</div>
+                    <div class="card-stat-label">Coachs Experts</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-stat-value">1000+</div>
+                    <div class="card-stat-label">Sessions/Mois</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-stat-value">98%</div>
+                    <div class="card-stat-label">Satisfaction</div>
+                    <p class="text-secondary mb-4">
+                        Rejoignez-nous aujourd'hui et profitez de 7 jours d'essai gratuit
+                    </p>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket"></i> S'inscrire Maintenant
+                    </a>
+                </div>
+            </div>
+</section>
+{% endblock %}

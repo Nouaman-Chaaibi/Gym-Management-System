@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Connexion - Gym Management{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animate-slide-up">
+  <div class="col-md-5">
+    <div class="card-glass">
+      <div class="card-body">
+        <div class="text-center mb-4">
+          <i class="fas fa-sign-in-alt fa-3x text-primary mb-3"></i>
+          <h3 class="card-title">Connexion</h3>
+          <p class="text-secondary">Accédez à votre espace personnel</p>
+        </div>
+
+        <form method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="fas fa-user"></i> Nom d'utilisateur ou email
+            </label>
+            <div class="input-group">
+              <i class="fas fa-user input-group-icon"></i>
+              <input name="username" class="form-control" placeholder="Entrez votre nom d'utilisateur ou email" required
+                autofocus>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="fas fa-lock"></i> Mot de passe
+            </label>
+            <div class="input-group">
+              <i class="fas fa-lock input-group-icon"></i>
+              <input id="password" name="password" type="password" class="form-control"
+                placeholder="Entrez votre mot de passe" required>
+            </div>
+          </div>
+
+          <div class="mb-4 form-check">
+            <input type="checkbox" class="form-check-input" id="remember">
+            <label class="form-check-label text-secondary" for="remember">
+              Se souvenir de moi
+            </label>
+          </div>
+
+          <button class="btn btn-primary w-100 mb-3" type="submit">
+            <i class="fas fa-sign-in-alt"></i> Se connecter
+          </button>
+
+          <div class="text-center">
+            <p class="text-secondary mb-2">Pas encore de compte ?</p>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-ghost w-100">
+              <i class="fas fa-user-plus"></i> Créer un compte
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% block title %}Abonnements - Gym Management{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+  <!-- Page Header -->
+  <div class="text-center mb-5">
+    <h1><i class="fas fa-tag text-primary"></i> Nos Abonnements</h1>
+    <p class="text-secondary lead">Choisissez la formule qui vous convient le mieux</p>
+  </div>
+
+  <!-- Pricing Cards -->
+  <div class="row g-4 mb-5">
+    {% if abonnements %}
+    {% for abo in abonnements %}
+    <div class="col-md-4">
+      <div class="pricing-card {% if loop.index == 2 %}featured{% endif %}">
+        {% if loop.index == 2 %}
+        <div class="badge badge-primary mb-3">⭐ POPULAIRE</div>
+        {% endif %}
+
+        <h4 class="mb-3">{{ abo.nom }}</h4>
+
+        <div class="pricing-price">
+          {{ "%.2f"|format(abo.prix) }}€
+          <small class="text-secondary">
+            /{% if abo.duree_mois == 1 %}mois{% elif abo.duree_mois == 3 %}3 mois{% elif abo.duree_mois == 12 %}an{%
+            else %}{{ abo.duree_mois }} mois{% endif %}
+          </small>
+        </div>
+
+        {% if abo.description %}
+        <p class="text-secondary mb-4">{{ abo.description }}</p>
+        {% endif %}
+
+        <ul class="pricing-features mb-4">
+          <li>Durée: {{ abo.duree_mois }} mois</li>
+          <li>Type: {{ abo.type_abonnement }}</li>
+          {% if abo.nombre_sessions_incluses > 0 %}
+          <li>{{ abo.nombre_sessions_incluses }} sessions coaching/mois</li>
+          {% endif %}
+          <li>Accès illimité à la salle</li>
+          <li>Casier personnel</li>
+          {% if abo.type_abonnement == 'PREMIUM' or abo.type_abonnement == 'VIP' %}
+          <li>Accès espace wellness</li>
+          <li>Programme personnalisé</li>
+          {% endif %}
+          {% if abo.type_abonnement == 'VIP' %}
+          <li>Coaching illimité</li>
+          <li>Suivi nutritionnel</li>
+          <li>Accès 24/7</li>
+          {% endif %}
+        </ul>
+
+        {% if current_user.is_authenticated %}
+        {% if current_user.role == 'MEMBRE' %}
+        <form method="post" action="{{ url_for('membre.souscrire', abonnement_id=abo.abonnement_id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="fas fa-shopping-cart"></i> Souscrire
+          </button>
+        </form>
+        {% else %}
+        <button class="btn btn-ghost w-100" disabled>
+          Réservé aux membres
+        </button>
+        {% endif %}
+        {% else %}
+        <a href="{{ url_for('auth.register') }}"
+          class="btn {% if loop.index == 2 %}btn-primary{% else %}btn-ghost{% endif %} w-100">
+          <i class="fas fa-user-plus"></i> S'inscrire
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <!-- Fallback if no subscriptions in database -->
+    <div class="col-md-4">
+      <div class="pricing-card">
+        <h4>BASIC</h4>
+        <div class="pricing-price">29€<small class="text-secondary">/mois</small></div>
+        <ul class="pricing-features">
+          <li>Accès illimité à la salle</li>
+          <li>Casier personnel</li>
+          <li>Programme de base</li>
+        </ul>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-ghost w-100">
+          S'inscrire
+        </a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="pricing-card featured">
+        <div class="badge badge-primary mb-3">⭐ POPULAIRE</div>
+        <h4>PREMIUM</h4>
+        <div class="pricing-price">79€<small class="text-secondary">/3 mois</small></div>
+        <ul class="pricing-features">
+          <li>Tout de BASIC +</li>
+          <li>5 sessions coaching/mois</li>
+          <li>Espace wellness</li>
+          <li>Programme personnalisé</li>
+        </ul>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary w-100">
+          S'inscrire
+        </a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="pricing-card">
+        <h4>VIP</h4>
+        <div class="pricing-price">299€<small class="text-secondary">/an</small></div>
+        <ul class="pricing-features">
+          <li>Tout de PREMIUM +</li>
+          <li>Coaching illimité</li>
+          <li>Accès 24/7</li>
+          <li>Suivi nutritionnel</li>
+          <li>Événements exclusifs</li>
+        </ul>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-ghost w-100">
+          S'inscrire
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="card">
+    <div class="card-body">
+      <h3 class="text-center mb-4">
+        <i class="fas fa-list-check text-primary"></i> Comparaison des Formules
+      </h3>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Avantages</th>
+              <th class="text-center">BASIC</th>
+              <th class="text-center">PREMIUM</th>
+              <th class="text-center">VIP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Accès illimité</td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+            </tr>
+            <tr>
+              <td>Casier personnel</td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+            </tr>
+            <tr>
+              <td>Sessions coaching</td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+              <td class="text-center">12/mois</td>
+              <td class="text-center">Illimité</td>
+            </tr>
+            <tr>
+              <td>Espace wellness</td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+            </tr>
+            <tr>
+              <td>Programme personnalisé</td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+            </tr>
+            <tr>
+              <td>Suivi nutritionnel</td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+            </tr>
+            <tr>
+              <td>Accès 24/7</td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <div class="mt-5">
+    <h3 class="text-center mb-4">
+      <i class="fas fa-question-circle text-info"></i> Questions Fréquentes
+    </h3>
+
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h6><i class="fas fa-question text-primary"></i> Puis-je changer de formule ?</h6>
+            <p class="text-secondary mb-0">
+              Oui, vous pouvez upgrader votre abonnement à tout moment. Le changement sera effectif immédiatement.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h6><i class="fas fa-question text-primary"></i> Y a-t-il un engagement ?</h6>
+            <p class="text-secondary mb-0">
+              Non, tous nos abonnements sont sans engagement. Vous pouvez résilier à tout moment.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h6><i class="fas fa-question text-primary"></i> Puis-je suspendre mon abonnement ?</h6>
+            <p class="text-secondary mb-0">
+              Oui, vous pouvez suspendre temporairement votre abonnement pour raison médicale ou voyage prolongé.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h6><i class="fas fa-question text-primary"></i> Moyens de paiement ?</h6>
+            <p class="text-secondary mb-0">
+              Carte bancaire, virement, prélèvement automatique et espèces acceptés.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

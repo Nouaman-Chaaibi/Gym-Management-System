@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Membre - Admin{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="mb-4">
+                        <i class="fas fa-user-edit text-primary"></i>
+                        {{ action }} un Membre
+                    </h3>
+
+                    <form method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-user"></i> Nom
+                                </label>
+                                <input name="nom" class="form-control" value="{{ membre.nom if membre else '' }}"
+                                    placeholder="Nom de famille" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-user"></i> Prénom
+                                </label>
+                                <input name="prenom" class="form-control" value="{{ membre.prenom if membre else '' }}"
+                                    placeholder="Prénom" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input name="email" type="email" class="form-control"
+                                value="{{ membre.email if membre else '' }}" placeholder="email@exemple.com" required {%
+                                if membre %}readonly{% endif %}>
+                            {% if membre %}
+                            <small class="text-secondary">
+                                <i class="fas fa-info-circle"></i> L'email ne peut pas être modifié
+                            </small>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-phone"></i> Téléphone
+                                </label>
+                                <input name="telephone" type="tel" class="form-control"
+                                    value="{{ membre.telephone if membre else '' }}" placeholder="+212612345678"
+                                    required pattern="^\+[0-9]{12}$">
+                                <small class="text-secondary">
+                                    <i class="fas fa-info-circle"></i> Format: +212612345678
+                                </small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-calendar"></i> Date de Naissance *
+                                </label>
+                                <input name="date_naissance" type="date" id="date_naissance" class="form-control"
+                                    value="{{ membre.date_naissance.strftime('%Y-%m-%d') if membre and membre.date_naissance else '' }}"
+                                    max="{{ today }}" required>
+                                <small class="text-secondary">
+                                    <i class="fas fa-info-circle"></i> Vous devez avoir au moins 16 ans (vérifié lors de l'enregistrement)
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-map-marker-alt"></i> Adresse (optionnel)
+                            </label>
+                            <input name="adresse" class="form-control"
+                                value="{{ membre.adresse if membre else '' }}" placeholder="Adresse complète">
+                        </div>
+
+                        {% if membre %}
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-info-circle"></i> Statut
+                            </label>
+                            <select name="statut" class="form-select" required>
+                                <option value="ACTIF" {% if membre.statut=='ACTIF' %}selected{% endif %}>Actif
+                                </option>
+                                <option value="INACTIF" {% if membre.statut=='INACTIF' %}selected{% endif %}>Inactif
+                                </option>
+                                <option value="SUSPENDU" {% if membre.statut=='SUSPENDU' %}selected{% endif %}>
+                                    Suspendu
+                                </option>
+                            </select>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Note:</strong> Un mot de passe par défaut "Welcome123" sera attribué. Le membre
+                            devra le changer lors de sa première connexion.
+                        </div>
+                        {% endif %}
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Enregistrer
+                                </button>
+                                <a href="{{ url_for('admin.membres') }}" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Annuler
+                                </a>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

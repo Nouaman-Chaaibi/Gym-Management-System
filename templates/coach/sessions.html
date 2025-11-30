@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Sessions - Coach{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+  <h1 class="mb-4"><i class="fas fa-list text-primary"></i> Mes Sessions</h1>
+
+  {% if sessions %}
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th><i class="fas fa-hashtag"></i> ID</th>
+              <th><i class="fas fa-user"></i> Membre</th>
+              <th><i class="fas fa-calendar"></i> Date & Heure</th>
+              <th><i class="fas fa-dumbbell"></i> Type</th>
+              <th><i class="fas fa-info-circle"></i> Statut</th>
+              <th><i class="fas fa-cog"></i> Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for session in sessions %}
+            <tr>
+              <td>{{ session.session_id }}</td>
+              <td>{{ session.membre_info.nom if session.membre_info else 'N/A' }} {{ session.membre_info.prenom if
+                session.membre_info else '' }}</td>
+              <td>{{ session.date_heure_debut.strftime('%d/%m/%Y %H:%M') if session.date_heure_debut else 'N/A' }}</td>
+              <td>{{ session.type_session }}</td>
+              <td>
+                {% if session.statut == 'RESERVEE' %}
+                <span class="badge badge-warning"><i class="fas fa-clock"></i> Réservée</span>
+                {% elif session.statut == 'CONFIRMEE' %}
+                <span class="badge badge-success"><i class="fas fa-check"></i> Confirmée</span>
+                {% elif session.statut == 'ANNULEE' %}
+                <span class="badge badge-danger"><i class="fas fa-times"></i> Annulée</span>
+                {% elif session.statut == 'TERMINEE' %}
+                <span class="badge badge-info"><i class="fas fa-check-double"></i> Terminée</span>
+                {% else %}
+                <span class="badge badge-info">{{ session.statut }}</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="d-flex gap-2">
+                  {% if session.statut == 'RESERVEE' %}
+                  <a href="{{ url_for('coach.confirmer_session', id=session.session_id) }}"
+                    class="btn btn-sm btn-success" title="Confirmer">
+                    <i class="fas fa-check"></i>
+                  </a>
+                  <a href="{{ url_for('coach.annuler_session', id=session.session_id) }}" class="btn btn-sm btn-danger"
+                    title="Annuler">
+                    <i class="fas fa-times"></i>
+                  </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <i class="fas fa-inbox fa-3x text-secondary mb-3"></i>
+      <h5 class="text-secondary">Aucune session</h5>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
