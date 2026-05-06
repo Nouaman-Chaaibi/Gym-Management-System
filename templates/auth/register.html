@@ -94,7 +94,8 @@
               </label>
               <div class="input-group">
                 <i class="fas fa-calendar input-group-icon"></i>
-                <input name="date_naissance" type="date" id="date_naissance" class="form-control" max="{{ today }}" required>
+                <input name="date_naissance" type="date" id="date_naissance" class="form-control" max="{{ today }}"
+                  data-allow-past="true" required>
               </div>
               <small class="text-secondary">
                 <i class="fas fa-info-circle"></i> Vous devez avoir au moins 16 ans (vérifié lors de l'inscription)

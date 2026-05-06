@@ -170,8 +170,8 @@ def modifier_membre(membre_id):
             return redirect(url_for('admin.voir_membre', membre_id=membre_id))
         
         from datetime import date
-        today = date.today().isoformat()
-        return render_template('admin/membre_form.html', membre=membre, action='Modifier', today=today)
+        max_date = date.today().isoformat()
+        return render_template('admin/membre_form.html', membre=membre, action='Modifier', max_date=max_date)
     except Exception as e:
         db.session.rollback()
         flash(handle_oracle_error(e), 'danger')
@@ -188,33 +188,43 @@ def ajouter_membre():
             email = request.form.get('email')
             password = request.form.get('password', 'Welcome123')  # Default password
             
-            from datetime import date
-            today = date.today().isoformat()
-            
             # Validate email format
             import re
             email_pattern = r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$'
             if not re.match(email_pattern, email.lower()):
                 flash('Format d\'email invalide.', 'danger')
-                return render_template('admin/membre_form.html', membre=None, action='Ajouter', today=today)
+                return render_template('admin/membre_form.html', membre=None, action='Ajouter')
             
             # Check if user exists
             existing_user = User.query.filter_by(username=email).first()
             if existing_user:
                 flash('📧 Un compte avec cet email existe déjà.', 'danger')
-                return render_template('admin/membre_form.html', membre=None, action='Ajouter', today=today)
+                return render_template('admin/membre_form.html', membre=None, action='Ajouter')
             
             # Check if member with this email exists
             existing_membre = Membre.query.filter_by(email=email).first()
             if existing_membre:
                 flash('📧 Un membre avec cet email existe déjà.', 'danger')
-                return render_template('admin/membre_form.html', membre=None, action='Ajouter', today=today)
+                from datetime import date
+                max_date = date.today().isoformat()
+                return render_template('admin/membre_form.html', membre=None, action='Ajouter', max_date=max_date)
+            
+            # Check if telephone is already used
+            telephone = request.form.get('telephone')
+            existing_phone = Membre.query.filter_by(telephone=telephone).first()
+            if existing_phone:
+                flash('📞 Ce numéro de téléphone est déjà utilisé.', 'danger')
+                from datetime import date
+                max_date = date.today().isoformat()
+                return render_template('admin/membre_form.html', membre=None, action='Ajouter', max_date=max_date)
             
             # Validate date_naissance
             date_naiss_str = request.form.get('date_naissance')
             if not date_naiss_str:
                 flash('La date de naissance est obligatoire.', 'danger')
-                return render_template('admin/membre_form.html', membre=None, action='Ajouter', today=today)
+                from datetime import date
+                max_date = date.today().isoformat()
+                return render_template('admin/membre_form.html', membre=None, action='Ajouter', max_date=max_date)
             
             date_naiss = datetime.strptime(date_naiss_str, '%Y-%m-%d').date()
             
@@ -225,20 +235,34 @@ def ajouter_membre():
                 role='MEMBRE'
             )
             db.session.add(new_user)
-            db.session.flush()
+            db.session.flush()  # Get the user_id
             
-            # Create member using direct INSERT (proc_inscrire_membre requires password_hash which we handle in Flask)
+            print(f"DEBUG: Created user with user_id={new_user.user_id}")
+            
+            # Check if this user_id is already used by another member
+            existing_member_with_userid = Membre.query.filter_by(user_id=new_user.user_id).first()
+            if existing_member_with_userid:
+                db.session.rollback()
+                flash(f'🔑 Erreur interne: user_id {new_user.user_id} est déjà utilisé par membre {existing_member_with_userid.membre_id}', 'danger')
+                from datetime import date
+                max_date = date.today().isoformat()
+                return render_template('admin/membre_form.html', membre=None, action='Ajouter', max_date=max_date)
+            
+            # Create member using direct INSERT
             new_membre = Membre(
                 user_id=new_user.user_id,
                 nom=request.form.get('nom'),
                 prenom=request.form.get('prenom'),
                 email=email,
-                telephone=request.form.get('telephone'),
+                telephone=telephone,
                 date_naissance=date_naiss,
                 adresse=request.form.get('adresse', ''),
                 statut='INACTIF'
             )
             db.session.add(new_membre)
+            
+            print(f"DEBUG: Creating membre with user_id={new_membre.user_id}, email={new_membre.email}")
+            
             db.session.commit()
             
             flash(f'✅ Membre ajouté avec succès! Mot de passe: {password}', 'success')
@@ -247,12 +271,12 @@ def ajouter_membre():
             db.session.rollback()
             flash(handle_oracle_error(e), 'danger')
             from datetime import date
-            today = date.today().isoformat()
-            return render_template('admin/membre_form.html', membre=None, action='Ajouter', today=today)
+            max_date = date.today().isoformat()
+            return render_template('admin/membre_form.html', membre=None, action='Ajouter', max_date=max_date)
     
     from datetime import date
-    today = date.today().isoformat()
-    return render_template('admin/membre_form.html', membre=None, action='Ajouter', today=today)
+    max_date = date.today().isoformat()
+    return render_template('admin/membre_form.html', membre=None, action='Ajouter', max_date=max_date)
 
 
 @admin_bp.route('/membres/<int:membre_id>/supprimer', methods=['POST'])

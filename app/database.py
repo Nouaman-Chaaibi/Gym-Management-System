@@ -39,6 +39,18 @@ def call_procedure(proc_name, params=None):
         cur.close()
         conn.close()
         return result
+    except oracledb.DatabaseError as e:
+        if conn:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
+        # Extract Oracle error details
+        error_obj, = e.args
+        current_app.logger.error(f'Oracle Error calling {proc_name}: {error_obj.message}')
+        traceback.print_exc()
+        # Re-raise with more context
+        raise Exception(f'Oracle Error in {proc_name}: {error_obj.message}')
     except Exception:
         if conn:
             try:

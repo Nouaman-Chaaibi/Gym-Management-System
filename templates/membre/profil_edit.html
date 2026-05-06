@@ -63,9 +63,10 @@
                                 </label>
                                 <input name="date_naissance" type="date" id="date_naissance" class="form-control"
                                     value="{{ membre.date_naissance.strftime('%Y-%m-%d') if membre.date_naissance else '' }}"
-                                    max="{{ today }}" required>
+                                    max="{{ today }}" data-allow-past="true" required>
                                 <small class="text-secondary">
-                                    <i class="fas fa-info-circle"></i> Vous devez avoir au moins 16 ans (vérifié lors de la modification)
+                                    <i class="fas fa-info-circle"></i> Vous devez avoir au moins 16 ans (vérifié lors de
+                                    la modification)
                                 </small>
                             </div>
                         </div>

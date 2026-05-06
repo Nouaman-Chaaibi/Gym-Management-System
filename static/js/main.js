@@ -165,12 +165,17 @@ document.addEventListener('DOMContentLoaded', function() {
   
   
   // ============================================================================
-  // DATE & TIME INPUTS - Set minimum date to today
+  // DATE & TIME INPUTS - Set minimum date to today (except for birthdate fields)
   // ============================================================================
   const dateInputs = document.querySelectorAll('input[type="date"]');
   const today = new Date().toISOString().split('T')[0];
   
   dateInputs.forEach(function(input) {
+    // Skip inputs that should allow past dates (like date_naissance)
+    if (input.hasAttribute('data-allow-past')) {
+      return; // Don't set min for these inputs
+    }
+    
     if (!input.hasAttribute('min')) {
       input.setAttribute('min', today);
     }

@@ -10,12 +10,15 @@ CREATE OR REPLACE PROCEDURE proc_inscrire_membre(
     p_adresse VARCHAR2
 ) IS
   v_user_id NUMBER;
+  v_count NUMBER;
 BEGIN
   IF MONTHS_BETWEEN(SYSDATE, p_date_naissance) < 192 THEN
     RAISE_APPLICATION_ERROR(-20001, 'Membre doit avoir au moins 16 ans');
   END IF;
 
-  IF EXISTS(SELECT 1 FROM membres WHERE email = p_email) THEN
+  -- Vérifier si l'email existe déjà
+  SELECT COUNT(*) INTO v_count FROM membres WHERE email = p_email;
+  IF v_count > 0 THEN
     RAISE_APPLICATION_ERROR(-20002, 'Email déjà utilisé');
   END IF;
 
